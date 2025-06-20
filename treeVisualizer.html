@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" 
+    href="https://cdn.iconscout.com/icon/premium/png-256-thumb/binary-tree-diagram-484863.png" />
+    <title> Binary Tree Visualization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 25px;
+            background: rgba(26, 32, 44, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 900px;
+            margin: 15px auto 0;
+            line-height: 1.6;
+            color: #cbd5e0;
+        }
+        
+        .input-section {
+            background: rgba(26, 32, 44, 0.85);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+        }
+        
+        .output-section {
+            background: rgba(26, 32, 44, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .output-header {
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .output-header h2 {
+            font-size: 1.6rem;
+            color: #43cea2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tree-container {
+            flex: 1;
+            min-height: 600px;
+            background: rgba(15, 23, 42, 0.6);
+            position: relative;
+            overflow: auto;
+            padding: 30px;
+        }
+        
+        .tree {
+            position: relative;
+            min-height: 500px;
+            min-width: 100%;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #43cea2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #64b3f4;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 2px solid #2d3748;
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #43cea2;
+            box-shadow: 0 0 10px rgba(67, 206, 162, 0.4);
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(25, 130, 196, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(25, 130, 196, 0.5);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-fullscreen {
+            background: rgba(26, 32, 44, 0.7);
+            border: 1px solid rgba(67, 206, 162, 0.5);
+            width: auto;
+            padding: 10px 20px;
+        }
+        
+        .btn-fullscreen:hover {
+            background: rgba(67, 206, 162, 0.2);
+        }
+        
+        .node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            transition: all 0.3s;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+        
+        .node:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 20px rgba(67, 206, 162, 0.8);
+            z-index: 10;
+        }
+        
+        .line {
+            position: absolute;
+            background-color: rgba(100, 179, 244, 0.7);
+            height: 2px;
+            z-index: 1;
+            transform-origin: 0 0;
+        }
+        
+        .examples {
+            grid-column: 1 / -1;
+            background: rgba(26, 32, 44, 0.85);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .example-card {
+            background: rgba(15, 23, 42, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(67, 206, 162, 0.2);
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+            background: rgba(25, 42, 86, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: rgba(67, 206, 162, 0.5);
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #43cea2;
+        }
+        
+        .example-desc {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            color: #cbd5e0;
+        }
+        
+        footer {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+            opacity: 0.8;
+            color: #a0aec0;
+        }
+        
+        .fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            z-index: 10000;
+        }
+        
+        .fullscreen .tree-container {
+            min-height: calc(100vh - 60px);
+        }
+        
+        .fullscreen .tree {
+            min-height: calc(100vh - 100px);
+        }
+        
+        .tree-info {
+            position: absolute;
+            top: 10px;
+            right: -220px;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #64b3f4;
+            border: 1px solid rgba(100, 179, 244, 0.3);
+            z-index: 100;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .zoom-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .zoom-btn {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(67, 206, 162, 0.3);
+            color: #43cea2;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(67, 206, 162, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 1100px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .output-section {
+                min-height: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Binary Tree Visualization</h1>
+            <p class="subtitle">Visualize binary trees with optimized node positioning and line connections. Based on your algorithm for efficient tree rendering.</p>
+        </header>
+        
+        <div class="input-section">
+            <h2><i class="fas fa-sliders-h"></i> Tree Settings</h2>
+            
+            <div class="input-group">
+                <label for="treeInput"><i class="fas fa-code"></i> Level-order Traversal:</label>
+                <textarea id="treeInput" placeholder="Enter values separated by commas (e.g., 1,2,3,null,4,5,6)">50, 25, 75, 2, 3, 55, null, null, 5, 5, null ,null, 59, 4, 6,null,null, 58, null, null, null, null, 7, 57, null</textarea>
+            </div>
+            
+            <div class="input-group">
+                <label for="nodeSize"><i class="fas fa-expand"></i> Node Size:</label>
+                <select id="nodeSize">
+                    <option value="40">Small</option>
+                    <option value="50" selected>Medium</option>
+                    <option value="60">Large</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="animationSpeed"><i class="fas fa-bolt"></i> Animation Speed:</label>
+                <select id="animationSpeed">
+                    <option value="0">None</option>
+                    <option value="500">Slow</option>
+                    <option value="300" selected>Medium</option>
+                    <option value="100">Fast</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label><i class="fas fa-ruler"></i> Tree Scaling:</label>
+                <div class="controls">
+                    <div class="zoom-controls">
+                        <div class="zoom-btn" id="zoomInBtn"><i class="fas fa-search-plus"></i> Zoom In</div>
+                        <div class="zoom-btn" id="zoomOutBtn"><i class="fas fa-search-minus"></i> Zoom Out</div>
+                    </div>
+                    <div class="zoom-controls">
+                        <div class="zoom-btn" id="resetZoomBtn"><i class="fas fa-sync"></i> Reset</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="drawBtn" class="btn">
+                <i class="fas fa-draw-polygon"></i> Visualize Tree
+            </button>
+            
+            <div class="input-group" style="margin-top: 30px;">
+                <h2><i class="fas fa-lightbulb"></i> Tree Examples</h2>
+                <div class="examples-grid">
+                    <div class="example-card" data-tree="50, 25, 75, 2, null, 55, null, null, 5, null, 59, 4, 6, 58, null, null, null, null, 7, 57, null">
+                        <div class="example-title">Complex Tree</div>
+                        <div class="example-desc">Example from your C++ code with optimized positioning</div>
+                    </div>
+                    <div class="example-card" data-tree="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15">
+                        <div class="example-title">Complete Binary Tree</div>
+                        <div class="example-desc">Perfectly balanced tree with all levels filled</div>
+                    </div>
+                    <div class="example-card" data-tree="1,2,3,null,4,5,6,null,null,7,8,9,10">
+                        <div class="example-title">Balanced Tree</div>
+                        <div class="example-desc">Tree with some missing nodes</div>
+                    </div>
+                    <div class="example-card" data-tree="1,2,null,3,4,null,null,5,6,7,8">
+                        <div class="example-title">Left-heavy Tree</div>
+                        <div class="example-desc">Tree that leans to the left side</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="output-section" id="outputSection">
+            <div class="output-header">
+                <h2><i class="fas fa-project-diagram"></i> Tree Visualization</h2>
+                <div>
+                    <button id="fullscreenBtn" class="btn btn-fullscreen">
+                        <i class="fas fa-expand"></i> Full Screen
+                    </button>
+                </div>
+            </div>
+            <div class="tree-container" id="treeContainer">
+                <div class="tree" id="tree"></div>
+                <div class="tree-info" id="treeInfo">Nodes: 0 | Height: 0 | Width: 0px</div>
+            </div>
+        </div>
+        
+        <div class="examples">
+            <h2><i class="fas fa-info-circle"></i> How It Works</h2>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-title">Algorithm</div>
+                    <div class="example-desc">Uses subtree width calculations for optimal node positioning</div>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">Line Optimization</div>
+                    <div class="example-desc">Connects to node edges for minimal line lengths</div>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">Navigation</div>
+                    <div class="example-desc">Scroll to explore large trees. Zoom in/out for details.</div>
+                </div>
+                <div class="example-card">
+                    <div class="example-title">Interactivity</div>
+                    <div class="example-desc">Hover over nodes to highlight, click to see details</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Binary Tree Visualization | Algorithm Implementation | Created with HTML, CSS & JavaScript</p>
+            <p>Based on your C++ algorithm for efficient tree rendering and line connections</p>
+        </footer>
+    </div>
+
+    <script>
+        class TreeNode {
+            constructor(val) {
+                this.val = val;
+                this.left = null;
+                this.right = null;
+                this.idx = 0;
+                this.level = 0;
+                this.leftwidth = 0;
+                this.rightwidth = 0;
+                this.x = 0;
+                this.y = 0;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const treeInput = document.getElementById('treeInput');
+            const nodeSize = document.getElementById('nodeSize');
+            const animationSpeed = document.getElementById('animationSpeed');
+            const drawBtn = document.getElementById('drawBtn');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const treeElement = document.getElementById('tree');
+            const outputSection = document.getElementById('outputSection');
+            const exampleCards = document.querySelectorAll('.example-card');
+            const treeInfo = document.getElementById('treeInfo');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const resetZoomBtn = document.getElementById('resetZoomBtn');
+            
+            let scale = 1.0;
+            let minIndex = Infinity;
+            let maxIndex = -Infinity;
+            let maxLevel = 0;
+            
+            // Draw tree on page load
+            drawTree();
+            
+            // Event listeners
+            drawBtn.addEventListener('click', drawTree);
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            exampleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    treeInput.value = card.dataset.tree;
+                    drawTree();
+                });
+            });
+            
+            zoomInBtn.addEventListener('click', () => {
+                scale = Math.min(scale + 0.1, 2.0);
+                applyZoom();
+            });
+            
+            zoomOutBtn.addEventListener('click', () => {
+                scale = Math.max(scale - 0.1, 0.5);
+                applyZoom();
+            });
+            
+            resetZoomBtn.addEventListener('click', () => {
+                scale = 1.0;
+                applyZoom();
+            });
+            
+            function applyZoom() {
+                treeElement.style.transform = `scale(${scale})`;
+                treeElement.style.transformOrigin = '0 0';
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (!outputSection.classList.contains('fullscreen')) {
+                    drawTree();
+                }
+            });
+            
+            function toggleFullscreen() {
+                if (outputSection.classList.contains('fullscreen')) {
+                    outputSection.classList.remove('fullscreen');
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+                } else {
+                    outputSection.classList.add('fullscreen');
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Exit Full Screen';
+                }
+                drawTree();
+            }
+            
+            function buildTree(levelOrder, nullValue) {
+                if (levelOrder.length === 0 || levelOrder[0] === nullValue) return null;
+                
+                const root = new TreeNode(levelOrder[0]);
+                const queue = [root];
+                let idx = 0;
+                const n = levelOrder.length;
+                
+                while (queue.length > 0 && idx < n) {
+                    const node = queue.shift();
+                    
+                    // Left child
+                    if (++idx < n && levelOrder[idx] !== nullValue) {
+                        node.left = new TreeNode(levelOrder[idx]);
+                        queue.push(node.left);
+                    }
+                    
+                    // Right child
+                    if (++idx < n && levelOrder[idx] !== nullValue) {
+                        node.right = new TreeNode(levelOrder[idx]);
+                        queue.push(node.right);
+                    }
+                }
+                
+                return root;
+            }
+            
+            function widthSubTree(node) {
+                if (!node) return 0;
+                
+                node.leftwidth = widthSubTree(node.left);
+                node.rightwidth = widthSubTree(node.right);
+                
+                return 1 + node.leftwidth + node.rightwidth;
+            }
+            
+            function setIndex(node, parentIdx, level, isRight) {
+                if (!node) return;
+                
+                if (isRight) {
+                    node.idx = parentIdx + node.leftwidth + 1;
+                } else {
+                    node.idx = parentIdx - node.rightwidth - 1;
+                }
+                
+                minIndex = Math.min(minIndex, node.idx);
+                maxIndex = Math.max(maxIndex, node.idx);
+                maxLevel = Math.max(maxLevel, level);
+                node.level = level;
+                
+                setIndex(node.left, node.idx, level + 1, false);
+                setIndex(node.right, node.idx, level + 1, true);
+            }
+            
+            function drawTree() {
+                // Clear previous tree
+                treeElement.innerHTML = '';
+                
+                // Reset tracking variables
+                minIndex = Infinity;
+                maxIndex = -Infinity;
+                maxLevel = 0;
+                
+                // Get input values
+                const input = treeInput.value.trim();
+                const size = parseInt(nodeSize.value);
+                const speed = parseInt(animationSpeed.value);
+                
+                // Parse input to array
+                const arr = input.split(',').map(item => {
+                    const val = item.trim();
+                    return val === 'null' ? null : parseInt(val);
+                }).filter(item => item !== undefined);
+                
+                // Validate input
+                if (arr.length === 0 || (arr.length === 1 && arr[0] === null)) {
+                    treeElement.innerHTML = '<p style="text-align:center; padding:20px; color:#64b3f4;">Please enter valid tree data</p>';
+                    treeInfo.textContent = 'Nodes: 0 | Height: 0 | Width: 0px';
+                    return;
+                }
+                
+                // Build tree structure
+                const root = buildTree(arr, null);
+                
+                // Calculate subtree widths
+                widthSubTree(root);
+                
+                // Set node indices and levels
+                setIndex(root, 0, 0, true);
+                
+                // Calculate required width and height
+                const width = maxIndex - minIndex + 1;
+                const height = maxLevel + 1;
+                const nodeCount = countNodes(root);
+                
+                // Update tree info
+                treeInfo.textContent = `Nodes: ${nodeCount} | Height: ${height} | Width: ${width}px`;
+                
+                // Set tree container dimensions
+                const containerWidth = width * (size + 40);
+                const containerHeight = height * (size + 80);
+                treeElement.style.width = `${containerWidth}px`;
+                treeElement.style.height = `${containerHeight}px`;
+                
+                // Draw tree
+                drawTreeRecursive(root, size, speed);
+            }
+            
+            function countNodes(node) {
+                if (!node) return 0;
+                return 1 + countNodes(node.left) + countNodes(node.right);
+            }
+            
+            function drawTreeRecursive(root, size, speed) {
+                const hSpacing = size + 40;
+                const vSpacing = size + 80;
+                
+                // Position nodes
+                positionNodes(root, hSpacing, vSpacing);
+                
+                // Draw lines first (so they appear behind nodes)
+                drawLines(root, speed);
+                
+                // Then draw nodes on top
+                drawNodes(root, size, speed);
+            }
+            
+            function positionNodes(node, hSpacing, vSpacing) {
+                if (!node) return;
+                
+                // Calculate position based on index and level
+                node.x = (node.idx - minIndex) * hSpacing;
+                node.y = node.level * vSpacing;
+                
+                // Position children
+                positionNodes(node.left, hSpacing, vSpacing);
+                positionNodes(node.right, hSpacing, vSpacing);
+            }
+            
+            function drawLines(node, speed) {
+                if (!node) return;
+                
+                // Draw line to left child
+                if (node.left) {
+                    drawLine(node.x, node.y, node.left.x, node.left.y, speed);
+                    drawLines(node.left, speed);
+                }
+                
+                // Draw line to right child
+                if (node.right) {
+                    drawLine(node.x, node.y, node.right.x, node.right.y, speed);
+                    drawLines(node.right, speed);
+                }
+            }
+            
+            function drawLine(x1, y1, x2, y2, speed) {
+                const line = document.createElement('div');
+                line.className = 'line';
+                
+                // Calculate line length and angle
+                const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                
+                // Position the line
+                line.style.width = `${length}px`;
+                line.style.left = `${x1}px`;
+                line.style.top = `${y1}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                // Animation
+                if (speed > 0) {
+                    line.style.opacity = '0';
+                    setTimeout(() => {
+                        line.style.transition = `opacity ${speed}ms ease-out`;
+                        line.style.opacity = '1';
+                    }, 10);
+                }
+                
+                treeElement.appendChild(line);
+            }
+            
+            function drawNodes(node, size, speed) {
+                if (!node) return;
+                
+                const element = document.createElement('div');
+                element.className = 'node';
+                element.textContent = node.val;
+                element.title = `Node: ${node.val} | Level: ${node.level}`;
+                
+                // Position the node
+                element.style.width = `${size}px`;
+                element.style.height = `${size}px`;
+                element.style.left = `${node.x - size/2}px`;
+                element.style.top = `${node.y - size/2}px`;
+                
+                // Animation
+                if (speed > 0) {
+                    element.style.opacity = '0';
+                    element.style.transform = 'scale(0)';
+                    setTimeout(() => {
+                        element.style.transition = `all ${speed}ms cubic-bezier(0.175, 0.885, 0.32, 1.275)`;
+                        element.style.opacity = '1';
+                        element.style.transform = 'scale(1)';
+                    }, 10);
+                }
+                
+                // Add hover effect
+                element.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.15)';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+                
+                // Add click effect
+                element.addEventListener('click', function() {
+                    alert(`Node value: ${node.val}\nLevel: ${node.level}\nIndex: ${node.idx}`);
+                });
+                
+                treeElement.appendChild(element);
+                
+                // Draw child nodes
+                drawNodes(node.left, size, speed);
+                drawNodes(node.right, size, speed);
+            }
+        });
+    </script>
+</body>
+</html>
