@@ -45,7 +45,7 @@ This repository contains a web-based tool for visualizing binary trees using an 
        node->leftwidth = widthSubTree(node->left);
        node->rightwidth = widthSubTree(node->right);
        return 1 + node->leftwidth + node->rightwidth;
-   }```
+   }
 
 ## How to Use
 
