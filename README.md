@@ -1,7 +1,5 @@
 # Binary Tree Visualizer
 
-![Tree Visualization Demo](https://via.placeholder.com/800x400.png?text=Binary+Tree+Visualization+Demo)
-
 This repository contains a web-based tool for visualizing binary trees using an optimized positioning algorithm. The visualization dynamically renders trees from level-order input and provides interactive features to explore tree structures.
 
 ## Features
